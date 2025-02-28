@@ -35,6 +35,8 @@ Las tecnologías involucradas son:
 
 ## Instalación
 
+Este proyecto funciona con pyton 3.10.10
+
 Se proporciona un archivo `requirements.txt` con todas las bibliotecas de Python necesarias para ejecutar este proyecto. Para instalar las dependencias, ejecuta:
 
 ```console
