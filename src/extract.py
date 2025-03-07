@@ -20,17 +20,28 @@ def get_public_holidays(public_holidays_url: str, year: str) -> DataFrame:
     Returns:
         DataFrame: A dataframe with the public holidays.
     """
-    # TODO: Implementa esta función.
-    # Debes usar la biblioteca requests para obtener los días festivos públicos del año dado.
-    # La URL es public_holidays_url/{year}/BR.
-    # Debes eliminar las columnas "types" y "counties" del DataFrame.
-    # Debes convertir la columna "date" a datetime.
-    # Debes lanzar SystemExit si la solicitud falla. Investiga el método raise_for_status
-    # de la biblioteca requests.
 
-    raise NotImplementedError
+    response = requests.get(f'{public_holidays_url}/{year}/BR')
+    try:
 
+        response.raise_for_status()
+        # Convierte la respuesta a JSON directamente
+        data = response.json()
+        
+        # Carga los datos en un DataFrame
+        df = DataFrame(data)
 
+        # Elimina las columnas innecesarias
+        df = df.drop(columns=["types", "counties"], errors='ignore')
+
+        # Convierte la columna 'date' a formato datetime
+        df["date"] = to_datetime(df["date"])
+        print(df.info())
+        return df
+    except requests.RequestException as e:
+        print(f'Error al obtener los días festivos: {e}')
+        raise SystemExit("Error al obtener los días festivos desde la API.")
+ 
 def extract(
     csv_folder: str, csv_table_mapping: Dict[str, str], public_holidays_url: str
 ) -> Dict[str, DataFrame]:

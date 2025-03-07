@@ -15,4 +15,20 @@ def load(data_frames: Dict[str, DataFrame], database: Engine):
     # usar pandas.DataFrame.to_sql() para cargar el DataFrame en la base de datos
     # como una tabla.
     # Para el nombre de la tabla, utiliza las claves del diccionario `data_frames`.
-    raise NotImplementedError
+    
+        # Elimina las tablas existentes antes de cargarlas
+    with database.connect() as conn:
+        for table_name in data_frames.keys():
+            try:
+                conn.execute(f"DROP TABLE IF EXISTS {table_name}")
+                print(f"Tabla '{table_name}' eliminada correctamente.")
+            except Exception as e:
+                print(f"Error al eliminar la tabla '{table_name}': {e}")
+
+    # Carga los DataFrames
+    for key, value in data_frames.items():
+        try:
+            value.to_sql(key, con=database, if_exists='replace', index=False)
+            print(f"Tabla '{key}' cargada exitosamente.")
+        except Exception as e:
+            print(f"Error al cargar la tabla '{key}': {e}")
